@@ -118,7 +118,7 @@ GPIO.setup(17, GPIO.OUT)  # GPIO 17번 핀을 출력 모드로 설정
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # GPIO 18번 핀을 입력 모드 + 내부 풀업 저항 활성화
 ```
 **풀업 저항 (Pull-up resistor)**: 기본적으로 HIGH(1) 상태 유지  
-**풀다운 저항 (Pull-down resistor)**: 기본적으로 LOW(0) 상태 유지 <- 보통 이것으로 많이 사용용 
+**풀다운 저항 (Pull-down resistor)**: 기본적으로 LOW(0) 상태 유지 <- 보통 이것으로 많이 사용됨
 
 ➡ 스위치 같은 입력 장치에서 **떠 있는 상태(Floating)를 방지**하기 위해 사용됨.
 
@@ -185,7 +185,7 @@ GPIO.output([17, 18], [GPIO.HIGH, GPIO.LOW])  # GPIO 17번 핀은 HIGH, 18번 �
 
 ---
 
-## GPIO.cleanup()
+## <mark>GPIO.cleanup()</mark>
 - GPIO 핀을 정리하고 초기 상태로 되돌리는 함수 (입력 모드로 변경됨)
 - 프로그램 종료 시 권장됨
   - 이전 프로그램에서 GPIO를 사용한 후 cleanup()을 호출하지 않으면, 다음 프로그램이 실행될 때 **"GPIO 핀을 이미 사용 중"**이라는 오류가 발생할 수도 있음
