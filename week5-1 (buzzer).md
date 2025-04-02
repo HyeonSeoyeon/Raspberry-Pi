@@ -24,7 +24,7 @@
 ## 기본 구동 프로그램 
 - GPIO 17핀(핀 11)을 출력 모드로 설정
 - GPIO 17핀을 순회하면 On/Off 코딩
-- 키보드 인터럽트 발생까지 단순히 부저 HIGH, LOW가 반복, 터미널에 상태 출력력
+- 키보드 인터럽트 발생까지 단순히 부저 HIGH, LOW가 반복, 터미널에 상태 출력
 - <mark>GPIO.out() 사용하여 부저를 켜고 끔</mark>
 <br>buzzer.py
 ```python
@@ -103,7 +103,7 @@ def play(note, duration):
 try:  
     for note, duration in melody:
         play(note, duration)
-        time.sleep(0.1)  # 음표 사이의 간격, 다음 음 사이에 Low가 0.1초 동안 안 감.
+        time.sleep(0.1)  # 음표 사이의 간격, 다음 음 사이에 Low가 0.1초 동안 감.
 finally:
     if pwm is not None:
         try:
