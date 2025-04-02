@@ -1,6 +1,30 @@
-buzzer.py
+# 1. 버저(Buzzer) 액츄레이터 모듈 설치
+1. <mark>액티브 버저 모듈</mark>
+  - 액티브 버저 모듈은 전기 신호를 받았을 때 소리를 내는 장치.
+  - 내장된 발진 회로를 가지고 있어서 단순히 <mark>전원을 공급하면 특정 주파수로 소리</mark>를 낼 수 있음.
+  - 액티브 버저는 로봇, 알람 시스템, 사용자 인터페이스 피드백 등 다양한 응용 프로그램에 사용됨.
+2. 기본 사양
+  - 전원 공급: 일반적으로 3.3V 또는 <mark>5V</mark> DC
+  - 소비 전류: 약 30mA
+  - 작동 주파수: 주로 <mark>2kHz</mark> 내외 (<mark>1초에 최대 2000번의 진폭(진동)</mark>)
+    - <mark>Hz: 1초 안에 생기는 진폭을 헤르츠(Hz)라고 한다.</mark>
+    - <mark>가정주파수: 20Hz~20kHz</mark>
+    - 2kHz = 1초->2000번 진폭 = 0.5초->1000번 진폭 = 0.05초->100번 진폭 = 0.005초->10번 진폭
+    - <mark>음의 높낮이는 주파수로 결정된다<mark>
+      - 도레미파솔라시도 -> Hz가 다름 (ex.도: 261.63 Hz)
+  - <mark>소리 크기: 약 85 dB 정도<mark>
+    - <mark>db: 소리의 크고 작음<mark>
+    - 2Hz의 음높이에서 소리를 크게 하고 싶다면 -> 1초에 진폭(봉우리)가 2개인데, <mark>봉우리의 높이가 커짐<mark>
+  - GPIO 연결
+    - VCC : 3.3V 또는 5V Power(<mark>핀 2</mark>)
+    - GND : Ground 접지(<mark>핀 14</mark>)
+    - <mark>IN : 입력 핀으로 LOW 또는 HIGH 신호에 따라 버저가 활성화 됨</mark> (<mark>GPIO 17(핀 11)</mark>)
+---
+# 2. 버저(Buzzer) 액츄레이터 구동 및 응용
+## 기본 구동 프로그램 
 - GPIO 17핀(핀 11)을 출력 모드로 설정
 - GPIO 17핀을 순회하면 On/Off 코딩
+buzzer.py
 ```python
 import RPi.GPIO as GPIO
 import time
@@ -30,10 +54,10 @@ except KeyboardInterrupt:
 ```
 
 ---
-
-
-buzzer_melody.py
+## 계이름 응용 구동 프로그램
 - 주파수 대역과 음 지속 시간을 이용하여 계이름(도레미파...시도) 소리 출력
+- 도(C4)가 0.5초동안 261.63/2번 진동 -> 0.1초동안 LOW -> 레(D4)가 0.5초동안 293.66/2번 진동 ->  0.1초동안 LOW -> ...
+buzzer_melody.py
 ```python
 import RPi.GPIO as GPIO
 import time
@@ -47,7 +71,8 @@ GPIO.setup(BUZZER_PIN, GPIO.OUT)
 pwm = None
 
 # PWM 인스턴스 생성 및 초기 주파수 설정
-pwm = GPIO.PWM(BUZZER_PIN, 100) #부저의 경우 MAX 2000(2kHz), 출력 범위(약 1Hz ~ 10kHz)
+#부저의 경우 MAX 2000(2kHz), 출력 범위(약 1Hz ~ 10kHz)
+pwm = GPIO.PWM(BUZZER_PIN, 100) # 초기값을 100Hz로 설정
 pwm.start(0)
 
 # 주요 음표의 주파수 (단위: Hz)
@@ -59,23 +84,23 @@ notes = {
     'G4': 392.00,
     'A4': 440.00,
     'B4': 493.88,
-    'C5': 523.25  # 추가된 높은 도 음표
+    'C5': 523.25  # 높은 도 음표
 }
 
 # 작은별 멜로디 (음표와 지속 시간)
 melody = [('C4', 0.5), ('D4', 0.5), ('E4', 0.5), ('F4', 0.5),
-          ('G4', 0.5), ('A4', 0.5), ('B4', 0.5), ('C5', 0.5)]  # 마지막 음을 높은 도로 변경
+          ('G4', 0.5), ('A4', 0.5), ('B4', 0.5), ('C5', 0.5)]
 
 def play(note, duration):
     pwm.ChangeFrequency(notes[note])
-    pwm.ChangeDutyCycle(50)  # 켜짐
+    pwm.ChangeDutyCycle(50)  # 켜짐, High와 Low를 1:1 비율로 보냄
     time.sleep(duration)  # 음표 지속 시간
-    pwm.ChangeDutyCycle(0)  # 꺼짐
+    pwm.ChangeDutyCycle(0)  # 꺼짐, High 신호를 안 보냄
 
 try:  
     for note, duration in melody:
         play(note, duration)
-        time.sleep(0.1)  # 음표 사이의 간격
+        time.sleep(0.1)  # 음표 사이의 간격, 다음 음 사이에 Low가 0.1초 동안 안 감.
 finally:
     if pwm is not None:
         try:
