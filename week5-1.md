@@ -26,7 +26,7 @@
 - GPIO 17핀을 순회하면 On/Off 코딩
 - 키보드 인터럽트 발생까지 단순히 부저 HIGH, LOW가 반복, 터미널에 상태 출력력
 - <mark>GPIO.out() 사용하여 부저를 켜고 끔</mark>
-buzzer.py
+<br>buzzer.py
 ```python
 import RPi.GPIO as GPIO
 import time
@@ -59,8 +59,8 @@ except KeyboardInterrupt:
 ## 계이름 응용 구동 프로그램
 - 주파수 대역과 음 지속 시간을 이용하여 계이름(도레미파...시도) 소리 출력
 - 도(C4)가 0.5초동안 261.63/2번 진동 -> 0.1초동안 LOW -> 레(D4)가 0.5초동안 293.66/2번 진동 ->  0.1초동안 LOW -> ...
-- <mark>PWM 인스턴스 생성하여 부저 제어 (GPIO.PWM())</mark><br>
-buzzer_melody.py
+- <mark>PWM 인스턴스 생성하여 부저 제어 (GPIO.PWM())</mark>
+<br>buzzer_melody.py
 ```python
 import RPi.GPIO as GPIO
 import time
