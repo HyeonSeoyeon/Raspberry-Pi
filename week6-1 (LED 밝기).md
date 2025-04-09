@@ -130,7 +130,7 @@ finally:
     GPIO.cleanup()
 ```
 
-또는는
+또는
 
 ```python
 import RPi.GPIO as GPIO
