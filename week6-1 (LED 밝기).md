@@ -53,7 +53,7 @@ finally:
 
 ---
 
-### 문제: RGB LED 색상 조합 제어 실습
+### 문제: RGB LED 색상 조합 제어 실습 : led_pwm_duty_lab.py
 - 3컬러 RGB LED는 아래와 같이 연결되어 있다.
   - 빨강: GPIO 18
   - 초록: GPIO 23
