@@ -32,7 +32,7 @@
   - 거리 dist가 0~99 사이일 때, 그 값을 PWM 듀티 사이클로 사용
   - 거리값이 클수록(멀수록) 듀티 사이클이 커지고, LED에 인가되는 평균 전압이 커져서 LED 밝기가 밝아짐
   - 최대 99로 제한됨 ```if dist > 100: dist = 99```
-```
+```python
 import RPi.GPIO as GPIO
 import time
 
@@ -64,10 +64,10 @@ def get_distance():
     GPIO.output(TRIG, GPIO.LOW) # TRIG 핀을 다시 False로 설정해 트리거 신호를 종료
 
     # 초음파 파동이 발사되고 반사되어 돌아온 첫 신호와 마지막 신호의 시간 측정
-    while GPIO.input(ECHO) == GPIO.LOW:  # ECHO 핀이 HIGH 상태로 전환되기를 기다림림
+    while GPIO.input(ECHO) == GPIO.LOW:  # ECHO 핀이 HIGH 상태로 전환되기를 기다림
         pulse_start = time.time()  # 초음파 펄스가 ECHO에 처음 도착한 시간 기록
     while GPIO.input(ECHO) == GPIO.HIGH:  #  ECHO 핀이 LOW 상태로 돌아갈 때까지 기다림
-        pulse_end = time.time()  # 초음파 펄스 ECHO에 마지막 도착한 시간 기록록
+        pulse_end = time.time()  # 초음파 펄스 ECHO에 마지막 도착한 시간 기록
 
     pulse_duration = pulse_end - pulse_start  # 초음파 파동이 발사되어 돌아오는 데 걸린 전체 시간을 계산
     distance = pulse_duration * (34300 / 2) # 소리속도 34300 cm/s
