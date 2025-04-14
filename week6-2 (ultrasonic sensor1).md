@@ -23,6 +23,13 @@
 - 거리 계산: 거리 = (왕복 시간 × 소리의 속도) / 2
   - 소리의 속도 = 34300 cm/s (단위 맞춰서 사용!)
   - 갔다가 돌아오는 데 걸린 시간을 재기 때문에 나누기 2를 해야함.
+```
+Trigger에서 0.00001초만큼 주면  40kHz 만큼 8개 파형이 나간다. (근데 start 타임을 못잡음. 언제나갈지모름) : 0.00025*8
+하지만 첫 신호가 오는 시점은 안다. 따라서 첫 신호가 오는 시점을 startTime으로 잡는다. 몇개오는지는 모르지만 마지막에 오는 파형 시간을 endTime으로 한다. 즉, 처음들어오는 시간과 마지막 파형이 들어오는 시간의 갭으로 거리를 계산한다. (거의 흡사하다. ) 이런 이론을 가지고 만들어진것이 이 장비임.
+거리 계산: 거리는 에코 핀이 HIGH 상태를 유지한 시간을 측정하여 계산됨.
+만약 startTime-endTime=0.2초라면 거리는 34.3m(3430cm)이다. 
+그러나 이 장비는 4m까지밖에 측정 못함.
+```
 
 ## 거리 측정 결과에 따라 LED의 밝기를 조절하는 코드 (멀수록 밝다!)
 - 초음파 센서 (TRIG, ECHO): 거리 측정
@@ -32,7 +39,7 @@
   - 거리 dist가 0~99 사이일 때, 그 값을 PWM 듀티 사이클로 사용
   - 거리값이 클수록(멀수록) 듀티 사이클이 커지고, LED에 인가되는 평균 전압이 커져서 LED 밝기가 밝아짐
   - 최대 99로 제한됨 ```if dist > 100: dist = 99```
-```
+```python
 import RPi.GPIO as GPIO
 import time
 
@@ -55,33 +62,10 @@ pwm.start(0)  # 초기 듀티 사이클 0
 
 # 센서로부터 거리 정보를 측정하고 그 값을 반환하는 함수
 def get_distance():
-    GPIO.output(TRIG, GPIO.LOW) # TRIG 핀을 False(0V)로 설정해 초기화. 측정 전에 트리거 핀을 정리
-    time.sleep(0.5) # 이전 측정의 잔여 신호에서 완전히 안정화되기 위한 대기 시간
-
-    # 신호 송신부에서 40kHz 신호 8개 송신(200µs 동안)
-    GPIO.output(TRIG, GPIO.HIGH) # TRIG 핀을 True(3.3V 또는 5V)로 설정해 트리거 핀에 10μs(0.00001초) 동안의 고전압 신호를 보낸다. 초음파 파동을 발생한다
-    time.sleep(0.00001) # 초음파 펄스를 발생시키기 위한 대기시간
-    GPIO.output(TRIG, GPIO.LOW) # TRIG 핀을 다시 False로 설정해 트리거 신호를 종료
-
-    while GPIO.input(ECHO) == GPIO.LOW:
-        pulse_start = time.time()
-    while GPIO.input(ECHO) == GPIO.HIGH:
-        pulse_end = time.time()
-
-    pulse_duration = pulse_end - pulse_start
-    distance = pulse_duration * (34300 / 2) # 소리속도 34300 cm/s
-    distance = round(distance, 2)
-    return distance
-
-try:
-    while True:
-        dist = get_distance()
-        print("Distance:", dist, "cm")
-
-        if dist > 100:
+    GPIO.output(TRIG, GPIO.LOW) # TRIG 핀을 False(0V)로한
             dist = 99
 
-        pwm.ChangeDutyCycle(dist)
+        pwm.ChangeDutyCycle(dist) # 측정된 거리 밝기(Duty Cycle)로 변환
         time.sleep(0.1)
 
 except KeyboardInterrupt:
