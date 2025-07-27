@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LED 제어</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+  <h3>LED 제어</h3>
+  <label><input type="radio" name="led" value="on"> ON</label>
+  <label><input type="radio" name="led" value="off"> OFF</label>
+  <p id="status">LED 상태: 알 수 없음</p>
+
+  <script>
+    const socket = io("http://192.168.137.133:5000"); // socket.io 서버와 연결 시도(반복)
+
+    socket.on("connect", function() {
+      // socket.io 서버에 정상 접속 됨을 알림
+      socket.emit("get_led_status"); // socket.io 서버에 지금 LED 상태 확인
+    });
+
+    socket.on("led_status", function(data) {
+      // client가 요청한 LED 상태 정보를 반납
+      $("#status").text("LED 상태: " + data.state);
+      $("input[name='led'][value='" + data.state + "']").prop("checked", true);
+    });
+
+    $("input[name='led']").change(function() {
+      // client의 라디오 버튼의 이벤트가 발생하면
+      const state = $(this).val();
+      socket.emit("led_control", { state: state }); // socket.io 서버에 state = on or off 전송
+    });
+  </script>
+</body>
+</html>
